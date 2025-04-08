@@ -15,9 +15,11 @@ if ($conn->connect_error) {
 // 獲取文章 ID
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
-// 查詢文章內容
-$sql = "SELECT title, summary, content, created_at FROM articles WHERE id = $id AND is_published = 1";
-$result = $conn->query($sql);
+// 使用參數化查詢查詢文章內容
+$stmt = $conn->prepare("SELECT title, summary, content, created_at FROM articles WHERE id = ? AND is_published = 1");
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$result = $stmt->get_result();
 
 if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();

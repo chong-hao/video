@@ -9,6 +9,15 @@ date_default_timezone_set('Asia/Taipei'); // 設置為台北時間
 $currentTime = date('mdH'); // 格式為 月日時，例如 040312（4月3日12時）
 $generatedCode = $currentTime . "123"; // 加上固定數字 123
 
+// 檢查是否已登入
+if (isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true) {
+    // 延長 Session 有效期
+    $_SESSION['login_time'] = time();
+    setcookie("admin_logged_in", "true", time() + 3600, "/");
+    header("Location: admin.php"); // 已登入直接跳轉
+    exit();
+}
+
 // 檢查是否為 HTTP 請求
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $inputCode = $_POST['authCode'] ?? ''; // 使用者輸入的授權碼
@@ -20,7 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION['login_time'] = time(); // 記錄登入時間
 
         // 設置一個有效期為 1 小時的 Cookie
-        setcookie("admin_logged_in", "true", time() + 3600, "/");
+        setcookie("admin_logged_in", "true", time() + 3600, "/"); // 延長 Cookie 有效期
 
         header("Location: admin.php"); // 登入後跳轉到管理員頁面
         exit();

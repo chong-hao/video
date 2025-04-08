@@ -45,7 +45,8 @@ $result = $conn->query($sql);
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <a class="navbar-brand" href="#">管理後台</a>
-        <a href="ad_logout.php" class="btn btn-danger ml-auto">登出</a>
+        <a href="index.php" class="btn btn-primary ml-auto mr-2">首頁</a> <!-- 新增首頁連結 -->
+        <a href="ad_logout.php" class="btn btn-danger">登出</a>
     </nav>
 
     <div class="container mt-4">

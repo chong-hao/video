@@ -32,14 +32,16 @@ if (!preg_match('/^(09\d{8})$/', $user) && !filter_var($user, FILTER_VALIDATE_EM
 // 密碼加密
 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-// 插入資料庫
-$sql = "INSERT INTO users (username, password) VALUES ('$user', '$hashed_password')";
+// 使用參數化查詢插入資料庫
+$stmt = $conn->prepare("INSERT INTO users (username, password) VALUES (?, ?)");
+$stmt->bind_param("ss", $user, $hashed_password);
 
-if ($conn->query($sql) === TRUE) {
+if ($stmt->execute()) {
     echo "<script>alert('註冊成功！請登入。'); window.location.href='login.php';</script>";
 } else {
-    echo "錯誤: " . $sql . "<br>" . $conn->error;
+    echo "錯誤: " . $stmt->error;
 }
 
+$stmt->close();
 $conn->close();
 ?>
