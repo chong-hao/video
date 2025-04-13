@@ -1,4 +1,5 @@
 <?php
+session_start(); // 確保 Session 啟動
 // 連接 MySQL
 $servername = "localhost";
 $username = "root";
@@ -39,12 +40,18 @@ $result = $conn->query($sql);
                 </li>
             </ul>
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="ad_login.php">管理後台</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="register.php">會員註冊</a>
-                </li>
+                <?php if (isset($_SESSION['user_id'])): ?>
+                    <li class="nav-item">
+                        <a class="nav-link" href="user_dashboard.php">你好，<?php echo htmlspecialchars($_SESSION['username']); ?></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="logout.php">登出</a>
+                    </li>
+                <?php else: ?>
+                    <li class="nav-item">
+                        <a class="nav-link" href="login.php">會員登入</a>
+                    </li>
+                <?php endif; ?>
             </ul>
         </div>
     </nav>

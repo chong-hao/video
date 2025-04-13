@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 // 連接 MySQL
 $servername = "localhost";
 $username = "root";
@@ -29,6 +31,21 @@ if ($result->num_rows > 0) {
     $created_at = date('Y-m-d', strtotime($row['created_at']));
 } else {
     die("文章不存在或尚未上架");
+}
+
+if (isset($_SESSION['user_id'])) {
+    $user_id = $_SESSION['user_id'];
+    $is_favorited = false;
+
+    // 檢查是否已收藏
+    $stmt = $conn->prepare("SELECT id FROM favorites WHERE user_id = ? AND article_id = ?");
+    $stmt->bind_param("ii", $user_id, $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($result->num_rows > 0) {
+        $is_favorited = true;
+    }
+    $stmt->close();
 }
 ?>
 
@@ -69,6 +86,21 @@ if ($result->num_rows > 0) {
                 </div>
             </div>
             <div class="card-footer text-center">
+                <?php if (isset($_SESSION['user_id'])): ?>
+                    <?php if ($is_favorited): ?>
+                        <form action="unfavorite.php" method="POST" style="display:inline;">
+                            <input type="hidden" name="article_id" value="<?php echo $id; ?>">
+                            <button type="submit" class="btn btn-danger">取消收藏</button>
+                        </form>
+                    <?php else: ?>
+                        <form action="favorite.php" method="POST" style="display:inline;">
+                            <input type="hidden" name="article_id" value="<?php echo $id; ?>">
+                            <button type="submit" class="btn btn-primary">加入收藏</button>
+                        </form>
+                    <?php endif; ?>
+                <?php else: ?>
+                    <a href="login.php" class="btn btn-secondary">登入以收藏</a>
+                <?php endif; ?>
                 <a href="index.php" class="btn btn-secondary">返回首頁</a>
             </div>
         </div>
